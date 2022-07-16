@@ -1,5 +1,5 @@
 <template>
-  <div v-if="can(`role_access`)">
+  <div v-if="can(`assign_permission_access`)">
     <div class="text-center ma-2">
       <v-snackbar v-model="snackbar" top="top" color="secondary" elevation="24">
         {{ response }}
@@ -7,13 +7,13 @@
     </div>
     <v-row class="mt-5 mb-5">
       <v-col cols="6">
-        <h3>{{Model}}</h3>
-        <div>Dashboard / {{Model}}</div>
+        <h3>{{ Module }}</h3>
+        <div>Dashboard / {{ Module }}</div>
       </v-col>
       <v-col cols="6">
         <div class="text-right">
           <v-btn
-            v-if="can(`role_deleted`)"
+            v-if="can(`assign_permission_delete`)"
             small
             color="error"
             class="mr-2 mb-2"
@@ -22,18 +22,18 @@
           >
 
           <v-btn
-            v-if="can(`role_create`)"
+            v-if="can(`assign_permission_create`)"
             small
             color="primary"
-            to="/schedule/create"
+            to="/duty_organizer/create"
             class="mb-2"
-            >{{Model}} +</v-btn
+            >{{ Module }} +</v-btn
           >
         </div>
       </v-col>
     </v-row>
     <v-data-table
-      v-if="can(`role_view`)"
+      v-if="can(`assign_permission_view`)"
       v-model="ids"
       show-select
       item-key="id"
@@ -48,6 +48,8 @@
       class="elevation-1"
     >
       <template v-slot:top>
+        <v-toolbar dark class="gradient-custom-2">{{ Module }}s</v-toolbar>
+
         <v-toolbar flat color="">
           <v-toolbar-title>List</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
@@ -61,16 +63,42 @@
           ></v-text-field>
         </v-toolbar>
       </template>
+      <template v-slot:item.permission_names="{ item }">
+        <v-chip
+          class="ma-1"
+          small
+          color="primary"
+          v-for="(pa, idx) in item.permission_names"
+          :key="idx"
+        >
+          {{ pa }}
+        </v-chip>
+
+        <v-chip class="ma-1" small v-if="item.permission_names.length == 0">
+          No permissions assigned
+        </v-chip>
+      </template>
       <template v-slot:item.action="{ item }">
-        <v-icon v-if="can(`schedule_edit`)" color="secondary" small  @click="editItem(item)">
+        <v-icon
+          v-if="can(`assign_permission_edit`)"
+          color="secondary"
+          small
+          class="mr-2"
+          @click="editItem(item)"
+        >
           mdi-pencil
         </v-icon>
-        <v-icon v-if="can(`schedule_delete`)" color="error" small @click="deleteItem(item)">
+        <v-icon
+          v-if="can(`assign_permission_delete`)"
+          color="error"
+          small
+          @click="deleteItem(item)"
+        >
           mdi-delete
         </v-icon>
       </template>
-      <template v-slot:item.off_days="{ item }">
-        <v-chip small class="primary ma-1" v-for="(off_day, index) in item.off_days" :key="index">{{off_day}}</v-chip>
+      <template v-slot:no-data>
+        <!-- <v-btn color="primary" @click="initialize">Reset</v-btn> -->
       </template>
     </v-data-table>
     <NoAccess v-else />
@@ -80,34 +108,42 @@
 <script>
 export default {
   data: () => ({
+    Module: "Assign Permission",
     options: {},
-    Model: "Schedule",
-    endpoint: "schedule",
+    endpoint: "assign-permission",
     search: "",
     snackbar: false,
+    dialog: false,
     ids: [],
     loading: false,
     total: 0,
-    headers: [
-      { text: "Shift Name", align: "left", sortable: false, value: "shift_name" },
-      { text: "Time In", align: "left", sortable: false, value: "time_in" },
-      { text: "Time Out", align: "left", sortable: false, value: "time_out" },
-      { text: "Grace Time In (Minutes)", align: "left", sortable: false, value: "grace_time_in" },
-      { text: "Grace Time Out (Minutes)", align: "left", sortable: false, value: "grace_time_out" },
-      { text: "Absent In (Minutes)", align: "left", sortable: false, value: "absent_min_in" },
-      { text: "Absent Out (Minutes)", align: "left", sortable: false, value: "absent_min_out" },
-      { text: "Off Days", align: "left", sortable: false, value: "off_days"  },
-      { text: "Actions", align: "center", value: "action", sortable: false }
-    ],
+    headers: [],
+    editedIndex: -1,
+    editedItem: { name: "" },
+    defaultItem: { name: "" },
     response: "",
     data: [],
     errors: []
   }),
 
+  computed: {
+    formTitle() {
+      return this.editedIndex === -1
+        ? `New ${this.Module}`
+        : `Edit ${this.Module}`;
+    }
+  },
+
   watch: {
+    dialog(val) {
+      val || this.close();
+      this.errors = [];
+      this.search = "";
+    },
     options: {
       handler() {
         this.getDataFromApi();
+        this.getHeaders();
       },
       deep: true
     }
@@ -123,6 +159,23 @@ export default {
         (u && u.permissions.some(e => e.name == per || per == "/")) ||
         u.is_master
       );
+    },
+    getHeaders() {
+      this.headers = [
+        {
+          text: "Role",
+          align: "left",
+          sortable: false,
+          value: "role.name"
+        },
+        {
+          text: "Permissions",
+          align: "left",
+          sortable: false,
+          value: "permission_names"
+        },
+        { text: "Actions", align: "center", value: "action", sortable: false }
+      ];
     },
 
     getDataFromApi(url = this.endpoint) {
@@ -152,23 +205,24 @@ export default {
     },
 
     editItem(item) {
-      this.$router.push(`/schedule/${item.id}`)
+      this.$router.push(`assign_permission/${item.id}`);
     },
 
     delteteSelectedRecords() {
+      let just_ids = this.ids.map(e => e.id);
       confirm(
         "Are you sure you wish to delete selected records , to mitigate any inconvenience in future."
       ) &&
         this.$axios
           .post(`${this.endpoint}/delete/selected`, {
-            ids: this.ids.map(e => e.id)
+            ids: just_ids
           })
-          .then(({data}) => {
-            if (!data.status) {
-              this.errors = data.errors;
+          .then(res => {
+            if (!res.data.status) {
+              this.errors = res.data.errors;
             } else {
               this.getDataFromApi();
-              this.snackbar = data.status;
+              this.snackbar = res.data.status;
               this.ids = [];
               this.response = "Selected records has been deleted";
             }
@@ -183,16 +237,13 @@ export default {
         this.$axios
           .delete(this.endpoint + "/" + item.id)
           .then(({ data }) => {
-            if (!data.status) {
-              this.errors = data.errors;
-            } else {
-              this.getDataFromApi();
-              this.snackbar = data.status;
-              this.response = data.message;
-            }
+            const index = this.data.indexOf(item);
+            this.data.splice(index, 1);
+            this.snackbar = data.status;
+            this.response = data.message;
           })
           .catch(err => console.log(err));
-    },
+    }
   }
 };
 </script>

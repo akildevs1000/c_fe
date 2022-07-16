@@ -6,13 +6,13 @@
       </v-snackbar>
     </div>
 
-    <v-card v-if="permissions && permissions.length > 0">
+    <v-card>
       <v-form ref="form" lazy-validation>
         <v-card-text>
           <v-container>
             <v-row>
               <v-col>
-                <div class="display-1 pa-2">Assign Permissions</div>
+                <div class="display-1 pa-2">Duty Organizer</div>
               </v-col>
               <v-col>
                 <div class="display-1 pa-2 text-right">
@@ -24,23 +24,30 @@
               <v-col cols="12">
                 <v-select
                   :rules="Rules"
-                  v-model="role_id"
-                  :items="roles"
+                  v-model="schedule_id"
+                  :items="shifts"
                   item-value="id"
-                  item-text="name"
-                  label="Role*"
+                  item-text="shift_name"
+                  label="Shift*"
                 ></v-select>
-                <span v-if="errors && errors.role_id" class="red--text">
-                  {{ errors.role_id[0] }}
+                <span v-if="errors && errors.schedule_id" class="red--text">
+                  {{ errors.schedule_id[0] }}
                 </span>
 
-                <!-- <v-text-field
-                  @input="searchIt"
-                  v-model="search"
-                  label="Search"
-                  single-line
-                  hide-details
-                ></v-text-field> -->
+
+                <!-- <v-select
+                  :rules="Rules"
+                  v-model="department_id"
+                  :items="departments"
+                  item-value="id"
+                  item-text="name"
+                  label="Department*"
+                ></v-select> -->
+                <span v-if="errors && errors.department_id" class="red--text">
+                  {{ errors.department_id[0] }}
+                </span>
+
+                Total ({{employee_ids && employee_ids.length}}) employees selected
 
                 <v-checkbox
                   @change="setAllIds"
@@ -49,17 +56,17 @@
                 >
                 </v-checkbox>
                 <v-checkbox
-                  v-for="(pa, idx) in permissions"
+                  v-for="(employee, idx) in employees"
                   :key="idx"
-                  :value="pa.id"
-                  v-model="permission_ids"
-                  :label="`${pa.name}`"
+                  :value="employee.id"
+                  v-model="employee_ids"
+                  :label="`${employee.first_name}`"
                 >
                 </v-checkbox>
               </v-col>
               <v-col cols="12">
-                <span v-if="errors && errors.permission_ids" class="red--text">
-                  {{ errors.permission_ids[0] }}
+                <span v-if="errors && errors.employee_ids" class="red--text">
+                  {{ errors.employee_ids[0] }}
                 </span>
               </v-col>
 
@@ -94,30 +101,43 @@
 <script>
 export default {
   data: () => ({
-    role_id: "",
+    schedule_id: "",
+    department_id: "",
     search: "",
-    permission_ids: [],
-    permissions: [],
+    employee_ids: [],
+    employees: [],
     msg: "",
     snackbar: false,
     Rules: [v => !!v || "This field is required"],
     errors: [],
-    roles: [],
+    shifts: [],
+    departments:[],
     just_ids: false
   }),
   created() {
+
     let options = {
-      params: {
-        company_id: this.$auth.user.company.id
-      }
-    };
+        params: {
+          per_page: 100,
+          company_id: this.$auth.user.company.id
+        }
+      };
 
     this.$axios
-      .get("assign-permission/nars", options)
-      .then(({ data }) => (this.roles = data))
+      .get("schedule", options)
+      .then(({ data }) => (this.shifts = data.data))
       .catch(err => console.log(err));
 
-    this.getPermissions();
+      this.$axios
+      .get("departments", options)
+      .then(({ data }) => (this.departments = data.data))
+      .catch(err => console.log(err));
+
+      this.$axios
+      .get("employee", options)
+      .then(({ data }) => (this.employees = data.data))
+      .catch(err => console.log(err));
+
   },
   methods: {
     can(per) {
@@ -127,17 +147,10 @@ export default {
         u.is_master
       );
     },
-    getPermissions(url = "permission") {
-      this.$axios
-        .get(url)
-        .then(({ data }) => {
-          this.permissions = data;
-        })
-        .catch(err => console.log(err));
-    },
+
     setAllIds() {
-      this.permission_ids = this.just_ids
-        ? this.permissions.map(e => e.id)
+      this.employee_ids = this.just_ids
+        ? this.employees.map(e => e.id)
         : [];
     },
     searchIt(key) {
@@ -146,13 +159,13 @@ export default {
       } else if (key.length > 2) {
         this.getPermissions(`permission/search/${key}`);
       }
-      this.permission_ids = [];
+      this.employee_ids = [];
     },
     save() {
       this.errors = [];
       let payload = {
-        role_id: this.role_id,
-        permission_ids: this.permission_ids,
+        schedule_id: this.schedule_id,
+        employee_ids: this.employee_ids,
         company_id: this.$auth.user.company.id
       };
       console.log("🚀 ~ file: create.vue ~ line 107 ~ save ~ payload", payload);

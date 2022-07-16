@@ -169,6 +169,20 @@
                 >{{ errors.absent_min_out[0] }}</span
               >
             </v-col>
+
+            <v-col cols="12">
+              <label for="">Off Days</label>
+              <br />
+              <v-checkbox
+                style="float:left;"
+                class="mr-5"
+                v-for="(week_day, index) in week_days"
+                :key="index"
+                v-model="payload.off_days"
+                :label="week_day.label"
+                :value="week_day.value"
+              ></v-checkbox>
+            </v-col>
           </v-row>
           <v-row>
             <v-col cols="12">
@@ -196,6 +210,16 @@
 export default {
   data: () => ({
     Model: "Schedule",
+
+    week_days: [
+      { label: "Sun", value: "Sun" },
+      { label: "Mon", value: "Mon" },
+      { label: "Tue", value: "Tue" },
+      { label: "Wed", value: "Wed" },
+      { label: "Thu", value: "Thu" },
+      { label: "Fri", value: "Fri" },
+      { label: "Sat", value: "Sat" }
+    ],
     loading: false,
     time_in_menu: false,
     time_out_menu: false,
@@ -209,7 +233,8 @@ export default {
       grace_time_in: null,
       grace_time_out: null,
       absent_min_in: null,
-      absent_min_out: null
+      absent_min_out: null,
+      off_days: []
     },
 
     errors: [],

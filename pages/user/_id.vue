@@ -178,12 +178,17 @@ export default {
       });
     },
     store_device() {
-      let payload = this.payload;
+      if (
+        this.payload.password == "" ||
+        this.payload.password_confirmation == ""
+      ) {
+        delete this.payload.password;
+      }
 
       this.loading = true;
 
       this.$axios
-        .put(`/users/${this.id}`, payload)
+        .put(`/users/${this.id}`, this.payload)
         .then(({ data }) => {
           this.loading = false;
 

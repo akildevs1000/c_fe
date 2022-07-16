@@ -63,18 +63,18 @@
           ></v-text-field>
         </v-toolbar>
       </template>
-      <template v-slot:item.permissions_array="{ item }">
+      <template v-slot:item.permission_names="{ item }">
         <v-chip
           class="ma-1"
           small
           color="primary"
-          v-for="(pa, idx) in item.permissions_array"
-          :key="pa.id"
+          v-for="(pa, idx) in item.permission_names"
+          :key="idx"
         >
-          {{ pa.name }}
+          {{ pa }}
         </v-chip>
 
-        <v-chip class="ma-1" small v-if="item.permissions.length == 0">
+        <v-chip class="ma-1" small v-if="item.permission_names.length == 0">
           No permissions assigned
         </v-chip>
       </template>
@@ -172,7 +172,7 @@ export default {
           text: "Permissions",
           align: "left",
           sortable: false,
-          value: "permissions_array"
+          value: "permission_names"
         },
         { text: "Actions", align: "center", value: "action", sortable: false }
       ];
@@ -181,10 +181,7 @@ export default {
     getDataFromApi(url = this.endpoint) {
       this.loading = true;
 
-      let c = this.$auth.user.company.id;
-      console.log("🚀 ~ file: index.vue ~ line 185 ~ getDataFromApi ~ c", c)
-
-      const { sortBy, sortDesc, page, itemsPerPage } = this.options;
+      const { page, itemsPerPage } = this.options;
 
       let options = {
         params: {
@@ -194,35 +191,9 @@ export default {
       };
 
       this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
-        let items = data.data;
-        console.log(
-          "🚀 ~ file: index.vue ~ line 200 ~ this.$axios.get ~ items",
-          items
-        );
-
-        if (sortBy.length === 1 && sortDesc.length === 1) {
-          items = this.sorting(items, sortBy, sortDesc);
-        }
-
-        this.data = items;
+        this.data = data.data;
         this.total = data.total;
         this.loading = false;
-      });
-    },
-    sorting(items, sortBy, sortDesc) {
-      return items.sort((a, b) => {
-        const sortA = a[sortBy[0]];
-        const sortB = b[sortBy[0]];
-
-        if (sortDesc[0]) {
-          if (sortA < sortB) return 1;
-          if (sortA > sortB) return -1;
-          return 0;
-        } else {
-          if (sortA < sortB) return -1;
-          if (sortA > sortB) return 1;
-          return 0;
-        }
       });
     },
     searchIt(e) {

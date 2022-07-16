@@ -12,15 +12,14 @@
       </v-col>
     </v-row>
     <v-card>
-          <v-toolbar dark flat class="primary">
-             <h3>Create {{ Model }}</h3>
-          </v-toolbar>
+      <v-toolbar dark flat class="primary">
+        <h3>Create {{ Model }}</h3>
+      </v-toolbar>
 
       <v-card flat>
         <v-card-text>
           <v-row>
             <v-col cols="12" md="12">
-
               <v-text-field
                 v-model="payload.shift_name"
                 label="Shift Name"
@@ -58,11 +57,7 @@
                   full-width
                 >
                   <v-spacer></v-spacer>
-                  <v-btn
-                    x-small
-                    color="primary"
-                    @click="time_in_menu = false"
-                  >
+                  <v-btn x-small color="primary" @click="time_in_menu = false">
                     Cancel
                   </v-btn>
                   <v-btn
@@ -74,6 +69,9 @@
                   </v-btn>
                 </v-time-picker>
               </v-menu>
+              <span v-if="errors && errors.time_in" class="text-danger mt-2">{{
+                errors.time_in[0]
+              }}</span>
             </v-col>
             <v-col cols="12" md="6">
               <v-menu
@@ -102,11 +100,7 @@
                   full-width
                 >
                   <v-spacer></v-spacer>
-                  <v-btn
-                    x-small
-                    color="primary"
-                    @click="time_out_menu = false"
-                  >
+                  <v-btn x-small color="primary" @click="time_out_menu = false">
                     Cancel
                   </v-btn>
                   <v-btn
@@ -118,6 +112,9 @@
                   </v-btn>
                 </v-time-picker>
               </v-menu>
+              <span v-if="errors && errors.time_out" class="text-danger mt-2">{{
+                errors.time_out[0]
+              }}</span>
             </v-col>
 
             <v-col cols="12" md="6">
@@ -259,7 +256,19 @@
                 >{{ errors.absent_min_out[0] }}</span
               >
             </v-col>
-
+            <v-col cols="12">
+              <label for="">Off Days</label>
+              <br />
+              <v-checkbox
+                style="float:left;"
+                class="mr-5"
+                v-for="(week_day, index) in week_days"
+                :key="index"
+                v-model="payload.off_days"
+                :label="week_day.label"
+                :value="week_day.label"
+              ></v-checkbox>
+            </v-col>
           </v-row>
           <v-row>
             <v-col cols="12">
@@ -287,6 +296,16 @@
 export default {
   data: () => ({
     Model: "Schedule",
+
+    week_days: [
+      { label: "Sun", value: "Sunday" },
+      { label: "Mon", value: "Monday" },
+      { label: "Tue", value: "Tuesday" },
+      { label: "Wed", value: "Wednesday" },
+      { label: "Thu", value: "Thursday" },
+      { label: "Fri", value: "Friday" },
+      { label: "Sat", value: "Saturday" }
+    ],
     loading: false,
     time_in_menu: false,
     time_out_menu: false,
@@ -300,7 +319,8 @@ export default {
       grace_time_in: null,
       grace_time_out: null,
       absent_min_in: null,
-      absent_min_out: null
+      absent_min_out: null,
+      off_days: []
     },
 
     errors: [],
@@ -308,9 +328,7 @@ export default {
     response: "",
     snackbar: false
   }),
-  async created() {
-
-  },
+  async created() {},
   methods: {
     can(per) {
       let u = this.$auth.user;
@@ -323,7 +341,6 @@ export default {
     store_schedule() {
       let payload = this.payload;
       payload.company_id = this.$auth.user.company.id;
-
       this.loading = true;
 
       this.$axios
@@ -339,7 +356,10 @@ export default {
             setTimeout(() => this.$router.push(`/schedule`), 2000);
           }
         })
-        .catch(e => console.log(e));
+        .catch(({ message }) => {
+          this.snackbar = true;
+          this.response = message;
+        });
     }
   }
 };
