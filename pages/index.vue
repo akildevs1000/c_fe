@@ -6,9 +6,9 @@
           <v-col
             xs="12"
             sm="12"
-            md="3"
+            md="6"
             cols="12"
-            v-for="(i, index) in total_items"
+            v-for="(i, index) in items"
             :key="index"
           >
             <v-card class="no_print">
@@ -36,7 +36,7 @@
     </v-row>
     <v-row>
       <v-col cols="12">
-        <DataTable :title="title" :headers="headers" :endpoint="endpoint" />
+        <AttendanceLogs />
       </v-col>
     </v-row>
   </div>
@@ -46,34 +46,29 @@
 export default {
   data() {
     return {
-      tota4l_items: [],
+      items: [],
       headers: [
-        { text: "Company Code", value: "id" },
-        { text: "Company Name", value: "name" },
-        { text: "Contact Number", value: "contact.number" },
-        { text: "Contact Name", value: "contact.name" },
-        { text: "Max Devices", value: "max_devices" },
-        { text: "Max Employees", value: "max_employee" },
-        { text: "Location", value: "location" }
+        { text: "UserID", value: "UserID" },
+        { text: "LogTime", value: "LogTime" },
+        { text: "DeviceID", value: "DeviceID" },
+        { text: "SerialNumber", value: "SerialNumber" }
       ],
       data: [],
-      title: `Lattest Companies`,
-      endpoint: "company"
     };
   },
   created() {
     this.initialize();
   },
   methods: {
-    getColor(calories) {
-      if (calories > 400) return "red";
-      else if (calories > 200) return "orange";
-      else return "green";
-    },
     async initialize() {
-      this.total_items = [
+      this.items = [
         {
-          title: "TOTAL COMPANIES",
+          title: "TOTAL MODULES",
+          value: "254",
+          icon: "mdi-apps"
+        },
+        {
+          title: "TOTAL DEPARTMENTS",
           value: "254",
           icon: "mdi-apps"
         },
@@ -83,14 +78,9 @@ export default {
           icon: "mdi-account"
         },
         {
-          title: "TOTAL UNPAID",
-          value: "4000",
-          icon: "mdi-bank"
-        },
-        {
-          title: "TOTAL PAID",
+          title: "TOTAL USERS",
           value: "8000",
-          icon: "mdi-bank"
+          icon: "mdi-account"
         }
       ];
     }

@@ -7,7 +7,7 @@
     class="elevation-1"
   >
     <template v-slot:top>
-      <v-toolbar dark class="gradient-custom-2"> Lattest Companies </v-toolbar>
+      <v-toolbar dark class="gradient-custom-2"> {{ title }} </v-toolbar>
 
       <v-toolbar flat>
         <v-text-field

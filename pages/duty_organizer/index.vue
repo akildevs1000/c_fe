@@ -108,7 +108,7 @@
 <script>
 export default {
   data: () => ({
-    Module: "Assign Permission",
+    Module: "Duty Organizer",
     options: {},
     endpoint: "assign-permission",
     search: "",
@@ -118,20 +118,14 @@ export default {
     loading: false,
     total: 0,
     headers: [],
-    editedIndex: -1,
-    editedItem: { name: "" },
-    defaultItem: { name: "" },
+
     response: "",
     data: [],
     errors: []
   }),
 
   computed: {
-    formTitle() {
-      return this.editedIndex === -1
-        ? `New ${this.Module}`
-        : `Edit ${this.Module}`;
-    }
+
   },
 
   watch: {

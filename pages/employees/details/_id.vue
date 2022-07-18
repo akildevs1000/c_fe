@@ -459,14 +459,11 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <div class="text-overline mb-1">
-                  Employee Id : {{ payload.employee_id }}
+                  Employee Id : {{ payload && payload.employee_id || "---" }}
                 </div>
-                <v-list-item-title class="text-h5 mb-1">
-                  {{ payload.user_name }}
-                </v-list-item-title>
-                <v-list-item-subtitle>{{
-                  payload.user.name
-                }}</v-list-item-subtitle>
+                <div class="text-overline mb-1">
+                  User Name : {{ payload.user && payload.user.name || "---" }}
+                </div>
               </v-list-item-content>
             </v-list-item>
 
@@ -479,7 +476,8 @@
                     </v-list-item-title>
                   </v-col>
                   <v-col cols="8">
-                    {{ payload.first_name }}
+                    {{ payload.first_name && payload.first_name || "---" }}
+
                   </v-col>
 
                   <v-col cols="3">
@@ -488,7 +486,7 @@
                     </v-list-item-title>
                   </v-col>
                   <v-col cols="8">
-                    {{ payload.last_name }}
+                    {{ payload.last_name && payload.last_name || "---" }}
                   </v-col>
 
                   <v-col cols="3">
@@ -497,7 +495,7 @@
                     </v-list-item-title>
                   </v-col>
                   <v-col cols="8">
-                    {{ payload.department.name }}
+                    {{ payload.department && payload.department.name || "---" }}
                   </v-col>
 
                   <v-col cols="3">
@@ -506,7 +504,7 @@
                     </v-list-item-title>
                   </v-col>
                   <v-col cols="8">
-                    {{ payload.designation.name }}
+                    {{ payload.designation && payload.designation.name || "---" }}
                   </v-col>
                 </v-row>
               </v-list-item-content>
@@ -1076,12 +1074,7 @@ export default {
 
     getEmployeeDetails() {
       this.$axios.get(`employee/${this.$route.params.id}`).then(({ data }) => {
-        let r = data.record;
-
-        this.payload = {
-          ...r,
-          joining_date: this.formatted_date(r.joining_date)
-        };
+        this.payload = data;
         this.loading = false;
       });
     },
@@ -1096,7 +1089,6 @@ export default {
       this.$axios
         .delete(`documentinfo/${id}`)
         .then(({ data }) => {
-          console.log("🚀 ~ file: _id.vue ~ line 1126 ~ .then ~ data", data)
 
           this.loading = false;
 

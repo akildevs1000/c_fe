@@ -314,7 +314,7 @@
                       </div>
                       <div class="col-sm-6">
                         <div class="form-group">
-                          <label class="col-form-label">Joining Date </label>
+                          <label class="col-form-label">Joining Date</label>
                           <span class="text-danger">*</span>
                           <input
                             v-model="other.joining_date"
@@ -487,36 +487,34 @@ export default {
       this.preloader = true;
       this.id = this.$route.params.id;
       this.$axios.get(`employee/${this.id}`).then(({ data }) => {
-        let record = data.record;
+
+        // console.log("🚀 ~ file: _id.vue ~ line 515 ~ this.$axios.get ~ data", data)
+        // return
 
         this.payload = {
-          first_name: record.first_name,
-          last_name: record.last_name,
-          user_name: record.user.name,
-          email: record.user.email
+          first_name: data.first_name,
+          last_name: data.last_name,
+          user_name: data.user.name,
+          email: data.user.email
         };
 
         this.contact = {
-          phone_number: record.phone_number,
-          whatsapp_number: record.whatsapp_number,
-          phone_relative_number: record.phone_relative_number,
-          whatsapp_relative_number: record.whatsapp_relative_number
+          phone_number: data.phone_number,
+          whatsapp_number: data.whatsapp_number,
+          phone_relative_number: data.phone_relative_number,
+          whatsapp_relative_number: data.whatsapp_relative_number
         };
 
         this.other = {
-          designation_id: record.designation_id,
-          department_id: record.department_id,
-          joining_date: this.formatted_date(record.joining_date),
-          employee_id: record.employee_id
+          designation_id: data.designation_id,
+          department_id: data.department_id,
+          joining_date: data.edit_joining_date,
+          employee_id: data.employee_id
         };
         this.preloader = false;
       });
     },
 
-    formatted_date(v) {
-      let [year, month, date] = v.split("/");
-      return `${year}-${month}-${date}`;
-    },
     onpick_attachment() {
       this.$refs.attachment_input.click();
     },

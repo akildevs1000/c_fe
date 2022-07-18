@@ -45,6 +45,8 @@
                           </template>
                         </v-file-input>
                         <br />
+                        <a href="/employees.csv" download> Download Sample</a>
+                        <br />
                         <span
                           v-if="errors && errors.length > 0"
                           class="error--text"
@@ -129,11 +131,7 @@
               <div>
                 <v-img
                   style="border-radius:50%; height:125px; width:50%; margin:0 auto;"
-                  :src="
-                    item.profile_picture
-                      ? item.profile_picture
-                      : '/no-image.png'
-                  "
+                  :src="item.profile_picture || '/no-image.png'"
                 >
                 </v-img>
               </div>
@@ -143,7 +141,7 @@
               </div>
 
               <div>
-                {{ item.designation.name }}
+                {{ item.designation && item.designation.name || "" }}
               </div>
             </v-card-text>
           </v-card>
@@ -222,7 +220,7 @@ export default {
       this.errors = [];
       setTimeout(() => {}, 300);
     },
-    
+
     json_to_csv(json){
      let data = json.map(e => ({
         first_name: e.first_name,
@@ -264,9 +262,9 @@ export default {
 
       let element = document.createElement('a');
       element.setAttribute('href', 'data:text/csv;charset=utf-8, ' + encodeURIComponent(csvData));
-      element.setAttribute('download', "download.csv");    
+      element.setAttribute('download', "download.csv");
       document.body.appendChild(element);
-      element.click();    
+      element.click();
       document.body.removeChild(element);
     },
 
@@ -338,6 +336,7 @@ export default {
       };
 
       this.$axios.get(`${url}`, options).then(({ data }) => {
+
         this.data = data.data;
         this.total = data.data;
         this.next_page_url = data.next_page_url;
