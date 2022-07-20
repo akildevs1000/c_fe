@@ -66,7 +66,7 @@
                 >
                   <template v-slot:top>
                     <v-toolbar flat color="">
-                      <v-toolbar-title>{{ type }}</v-toolbar-title>
+                      <v-toolbar-title>Daily</v-toolbar-title>
                       <v-divider class="mx-2" inset vertical></v-divider>
                       <v-text-field
                         @input="searchIt"
@@ -96,7 +96,7 @@
                 >
                   <template v-slot:top>
                     <v-toolbar flat color="">
-                      <v-toolbar-title>{{ type }}</v-toolbar-title>
+                      <v-toolbar-title>Monthly</v-toolbar-title>
                       <v-divider class="mx-2" inset vertical></v-divider>
                       <v-text-field
                         @input="searchIt"
@@ -126,7 +126,7 @@
                 >
                   <template v-slot:top>
                     <v-toolbar flat color="">
-                      <v-toolbar-title>{{ type }}</v-toolbar-title>
+                      <v-toolbar-title>Yearly</v-toolbar-title>
                       <v-divider class="mx-2" inset vertical></v-divider>
                       <v-text-field
                         @input="searchIt"

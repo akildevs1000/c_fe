@@ -80,15 +80,6 @@
       </template>
       <template v-slot:item.action="{ item }">
         <v-icon
-          v-if="can(`assign_permission_edit`)"
-          color="secondary"
-          small
-          class="mr-2"
-          @click="editItem(item)"
-        >
-          mdi-pencil
-        </v-icon>
-        <v-icon
           v-if="can(`assign_permission_delete`)"
           color="error"
           small
@@ -110,7 +101,7 @@ export default {
   data: () => ({
     Module: "Duty Organizer",
     options: {},
-    endpoint: "assign-permission",
+    endpoint: "no-shift",
     search: "",
     snackbar: false,
     dialog: false,
@@ -124,9 +115,7 @@ export default {
     errors: []
   }),
 
-  computed: {
-
-  },
+  computed: {},
 
   watch: {
     dialog(val) {
@@ -157,17 +146,30 @@ export default {
     getHeaders() {
       this.headers = [
         {
-          text: "Role",
+          text: "Employee Id",
           align: "left",
           sortable: false,
-          value: "role.name"
+          value: "employees.employee_id"
         },
         {
-          text: "Permissions",
+          text: "Employee Full Name",
           align: "left",
           sortable: false,
-          value: "permission_names"
+          value: "employees.first_name"
         },
+        {
+          text: "Phone Number",
+          align: "left",
+          sortable: false,
+          value: "employees.phone_number"
+        },
+        {
+          text: "Whatsapp Number",
+          align: "left",
+          sortable: false,
+          value: "employees.whatsapp_number"
+        },
+
         { text: "Actions", align: "center", value: "action", sortable: false }
       ];
     },
@@ -196,10 +198,6 @@ export default {
       } else if (e.length > 2) {
         this.getDataFromApi(`${this.endpoint}/search/${e}`);
       }
-    },
-
-    editItem(item) {
-      this.$router.push(`assign_permission/${item.id}`);
     },
 
     delteteSelectedRecords() {

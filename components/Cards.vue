@@ -1,14 +1,14 @@
 <template>
   <v-row>
-    <v-col v-for="(i, index) in cards" :key="index">
+    <v-col :md="columns" v-for="(i, index) in cards" :key="index">
       <v-card :to="i.link" class="no_print">
         <v-list-item>
           <v-list-item-content>
             <div class="text-overline mb-4">
-              Sub Module
+              {{ i.subheading }}
             </div>
             <v-list-item-title class="text-h5 mb-1">
-              {{ i.name }}
+              {{ i.heading }}
             </v-list-item-title>
           </v-list-item-content>
 
@@ -27,7 +27,7 @@
 <script>
 export default {
 
-  props : ["cards"],
+  props : ["cards","columns"],
 };
 </script>
 

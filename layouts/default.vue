@@ -246,7 +246,7 @@ export default {
       clipped: true,
 
       miniVariant: false,
-      title: "Attendance System",
+      title: "Smart HR System",
       logout_btn: {
         icon: "mdi-logout",
         label: "Logout"

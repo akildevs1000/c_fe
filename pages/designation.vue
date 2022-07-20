@@ -72,7 +72,7 @@
                     <v-col cols="12">
                       <v-text-field
                         v-model="editedItem.name"
-                        label="data"
+                        label="Designation"
                       ></v-text-field>
                       <span v-if="errors && errors.name" class="error--text">{{ errors.name[0] }}</span>
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Cards :cards="cards" />
+    <Cards class="mt-2" :cards="cards" :columns="6" />
   </div>
 </template>
 <script>
