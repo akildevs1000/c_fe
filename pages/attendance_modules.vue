@@ -30,24 +30,24 @@ export default {
         icon: "mdi-clock",
         link: "duty_organizer"
       },
+      // {
+      //   id: 3,
+      //   heading: "Summary Report",
+      //   subheading: "Auto Shift",
+      //   name: "Attendance Summary ",
+      //   icon: "mdi-chart-areaspline",
+      //   link: "attendance_summary_auto_shift"
+      // },
+      // {
+      //   id: 4,
+      //   heading: "Summary Report",
+      //   subheading: "No Shift",
+      //   name: "Attendance Summary",
+      //   icon: "mdi-chart-areaspline",
+      //   link: "attendance_summary_no_shift"
+      // },
       {
-        id: 3,
-        heading: "Summary Report",
-        subheading: "Auto Shift",
-        name: "Attendance Summary ",
-        icon: "mdi-chart-areaspline",
-        link: "attendance_summary_auto_shift"
-      },
-      {
-        id: 3,
-        heading: "Summary Report",
-        subheading: "No Shift",
-        name: "Attendance Summary",
-        icon: "mdi-chart-areaspline",
-        link: "attendance_summary_no_shift"
-      },
-      {
-        id: 4,
+        id: 5,
         heading: "Attendance Report",
         subheading: "Auto Shift",
         name: "Attendance Report (Auto Shift)",
@@ -55,7 +55,7 @@ export default {
         link: "attendance_report_auto_shift"
       },
       {
-        id: 5,
+        id: 6,
         heading: "Attendance Report",
         subheading: "No Shift",
         name: "Attendance Report (No Shift)",

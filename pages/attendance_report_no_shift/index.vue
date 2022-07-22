@@ -138,7 +138,7 @@ export default {
 
       this.$axios
         .get(url, {
-          params: { per_page: itemsPerPage, page: page, type: this.type,no_shift: 0 }
+          params: { per_page: itemsPerPage, page: page, type: this.type,no_shift: 1 }
         })
         .then(({ data }) => {
           this.data = data.data;

@@ -4,10 +4,7 @@
       <v-col cols="12">
         <v-row>
           <v-col
-            xs="12"
-            sm="12"
             md="6"
-            cols="12"
             v-for="(i, index) in items"
             :key="index"
           >
@@ -53,7 +50,7 @@ export default {
         { text: "DeviceID", value: "DeviceID" },
         { text: "SerialNumber", value: "SerialNumber" }
       ],
-      data: [],
+      data: []
     };
   },
   created() {
@@ -61,28 +58,12 @@ export default {
   },
   methods: {
     async initialize() {
-      this.items = [
-        {
-          title: "TOTAL MODULES",
-          value: "254",
-          icon: "mdi-apps"
-        },
-        {
-          title: "TOTAL DEPARTMENTS",
-          value: "254",
-          icon: "mdi-apps"
-        },
-        {
-          title: "TOTAL EMPLOYEES",
-          value: "267",
-          icon: "mdi-account"
-        },
-        {
-          title: "TOTAL USERS",
-          value: "8000",
-          icon: "mdi-account"
-        }
-      ];
+      let options = {
+        company_id: this.$auth.user.company.id
+      };
+      this.$axios.get(`count`, { params: options }).then(({ data }) => {
+        this.items = data;
+      });
     }
   }
 };

@@ -14,134 +14,42 @@
       </v-col>
 
       <v-col md="12">
-        <v-card>
-          <v-tabs vertical>
-            <v-tab @click="fetch_report(null)"> All </v-tab>
-            <v-tab @click="fetch_report(`daily`)"> Daily </v-tab>
-            <v-tab @click="fetch_report(`monthly`)"> Monthly </v-tab>
-            <v-tab @click="fetch_report(`yearly`)"> Yearly </v-tab>
-            <v-tab-item>
-              <v-card>
-                <v-data-table
-                  style="margin-left:5px;"
-                  :headers="headers"
-                  :items="data"
-                  :options.sync="options"
-                  :server-items-length="total"
-                  :loading="loading"
-                  :footer-props="{
-                    'items-per-page-options': [5, 10, 30, 50, 100]
-                  }"
-                  class="elevation-1"
-                >
-                  <template v-slot:top>
-                    <v-toolbar flat color="">
-                      <v-toolbar-title>All Data</v-toolbar-title>
-                      <v-divider class="mx-2" inset vertical></v-divider>
-                      <v-text-field
-                        @input="searchIt"
-                        v-model="search"
-                        label="Search"
-                        single-line
-                        hide-details
-                      ></v-text-field>
-                    </v-toolbar>
-                  </template>
-                </v-data-table>
-              </v-card>
-            </v-tab-item>
-            <v-tab-item>
-              <v-card>
-                <v-data-table
-                  style="margin-left:5px;"
-                  :headers="headers"
-                  :items="data"
-                  :options.sync="options"
-                  :server-items-length="total"
-                  :loading="loading"
-                  :footer-props="{
-                    'items-per-page-options': [5, 10, 30, 50, 100]
-                  }"
-                  class="elevation-1"
-                >
-                  <template v-slot:top>
-                    <v-toolbar flat color="">
-                      <v-toolbar-title>{{ type }}</v-toolbar-title>
-                      <v-divider class="mx-2" inset vertical></v-divider>
-                      <v-text-field
-                        @input="searchIt"
-                        v-model="search"
-                        label="Search"
-                        single-line
-                        hide-details
-                      ></v-text-field>
-                    </v-toolbar>
-                  </template>
-                </v-data-table>
-              </v-card>
-            </v-tab-item>
-            <v-tab-item>
-              <v-card>
-                <v-data-table
-                  style="margin-left:5px;"
-                  :headers="headers"
-                  :items="data"
-                  :options.sync="options"
-                  :server-items-length="total"
-                  :loading="loading"
-                  :footer-props="{
-                    'items-per-page-options': [5, 10, 30, 50, 100]
-                  }"
-                  class="elevation-1"
-                >
-                  <template v-slot:top>
-                    <v-toolbar flat color="">
-                      <v-toolbar-title>{{ type }}</v-toolbar-title>
-                      <v-divider class="mx-2" inset vertical></v-divider>
-                      <v-text-field
-                        @input="searchIt"
-                        v-model="search"
-                        label="Search"
-                        single-line
-                        hide-details
-                      ></v-text-field>
-                    </v-toolbar>
-                  </template>
-                </v-data-table>
-              </v-card>
-            </v-tab-item>
-            <v-tab-item>
-              <v-card>
-                <v-data-table
-                  style="margin-left:5px;"
-                  :headers="headers"
-                  :items="data"
-                  :options.sync="options"
-                  :server-items-length="total"
-                  :loading="loading"
-                  :footer-props="{
-                    'items-per-page-options': [5, 10, 30, 50, 100]
-                  }"
-                  class="elevation-1"
-                >
-                  <template v-slot:top>
-                    <v-toolbar flat color="">
-                      <v-toolbar-title>{{ type }}</v-toolbar-title>
-                      <v-divider class="mx-2" inset vertical></v-divider>
-                      <v-text-field
-                        @input="searchIt"
-                        v-model="search"
-                        label="Search"
-                        single-line
-                        hide-details
-                      ></v-text-field>
-                    </v-toolbar>
-                  </template>
-                </v-data-table>
-              </v-card>
-            </v-tab-item>
-          </v-tabs>
-        </v-card>
+        <v-tabs>
+          <v-tab @click="fetch_report(null)"> All </v-tab>
+          <v-tab @click="fetch_report(`daily`)"> Daily </v-tab>
+          <v-tab @click="fetch_report(`monthly`)"> Monthly </v-tab>
+          <v-tab @click="fetch_report(`yearly`)"> Yearly </v-tab>
+          <v-tab-item v-for="n in 4" :key="n">
+            <v-card>
+              <v-data-table
+                :headers="headers"
+                :items="data"
+                :options.sync="options"
+                :server-items-length="total"
+                :loading="loading"
+                :footer-props="{
+                  'items-per-page-options': [5, 10, 30, 50, 100]
+                }"
+                class="elevation-1"
+              >
+                <template v-slot:top>
+
+                  <v-toolbar flat color="">
+                    <v-toolbar-title>{{caps(type)}}</v-toolbar-title>
+                    <v-divider class="mx-2" inset vertical></v-divider>
+                    <v-text-field
+                      @input="searchIt"
+                      v-model="search"
+                      label="Search"
+                      single-line
+                      hide-details
+                    ></v-text-field>
+                  </v-toolbar>
+                </template>
+              </v-data-table>
+            </v-card>
+          </v-tab-item>
+        </v-tabs>
       </v-col>
     </v-row>
   </div>
@@ -151,9 +59,14 @@ export default {
   data() {
     return {
       headers: [
-        { text: "UserID", value: "UserID" },
-        { text: "LogTime", value: "LogTime" },
-        { text: "DeviceID", value: "DeviceID" }
+        { text: "Id", value: "UserID" },
+        { text: "Name", value: "employee.full_name" },
+        { text: "Department", value: "employee.department.name" },
+        { text: "Designation", value: "employee.designation.name" },
+        { text: "At", value: "LogTime" },
+        { text: "Device Id", value: "DeviceID" },
+        { text: "Device Name", value: "device.name" },
+        { text: "Device Location", value: "device.location" }
       ],
       data: [],
       title: `Attendance Logs`,
@@ -186,6 +99,12 @@ export default {
   async created() {},
 
   methods: {
+    caps(str) {
+      if (!str) {
+        str = "all data";
+      }
+      return str.replace(/\b\w/g, c => c.toUpperCase());
+    },
     fetch_report(type) {
       this.type = type;
       this.search = "";
@@ -230,3 +149,8 @@ export default {
   }
 };
 </script>
+<style>
+.v-data-table-header-mobile {
+  display: none !important;
+}
+</style>

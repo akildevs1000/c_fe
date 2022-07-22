@@ -391,7 +391,7 @@ export default {
     save() {
       this.errors = [];
       let payload = {
-        employee_ids: this.selected_employees.map(e => e.id),
+        employee_ids: this.selected_employees.map(e => e.employee_id),
         company_id: this.$auth.user.company.id
       };
       this.$axios
